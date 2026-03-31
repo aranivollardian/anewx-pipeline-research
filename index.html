@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnewX Strategic Pipeline Research — Vollardian</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#1A9E8F;--teal-light:#24C4B2;--black:#111;--dark:#1a1a1a;--card:#222;--card-hover:#2a2a2a;--border:#333;--text:#d8d8d8;--muted:#777;--white:#f0f0f0;--red:#e74c3c;--orange:#e67e22;--green:#27ae60;--blue:#3498db;--gold:#f1c40f;--r:6px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.55;}
+.ctr{max-width:1480px;margin:0 auto;padding:0 20px;}
+.hdr{background:#0d0d0d;border-bottom:1px solid var(--border);padding:14px 0;position:sticky;top:0;z-index:100;}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;}
+.brand{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--white);font-weight:700;}
+.brand span{color:var(--teal);}
+.hdr-t{font-size:16px;font-weight:600;color:var(--white);margin-top:2px;}
+.hdr-d{font-size:11px;color:var(--muted);}
+.tabs{display:flex;gap:2px;background:var(--dark);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;}
+.tab{padding:10px 16px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s;}
+.tab:hover{color:var(--white);}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);}
+.pnl{display:none;padding:20px 0;}
+.pnl.on{display:block;}
+h2{font-size:18px;font-weight:700;color:var(--white);margin-bottom:3px;}
+h3{font-size:15px;font-weight:600;color:var(--white);margin:20px 0 8px;}
+h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin:12px 0 6px;}
+.sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+/* Health rating cards */
+.hr-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
+.hr{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;}
+.hr-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.hr-val{font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--white);margin:4px 0;}
+.hr-chg{font-size:12px;font-weight:600;padding:2px 8px;border-radius:3px;display:inline-block;}
+.hr-up{background:#1a3a2a;color:#58d68d;}
+.hr-down{background:#3a1a1a;color:#e67e73;}
+.hr-flat{background:#2a2a1a;color:#f5b041;}
+.hr-note{font-size:11px;color:var(--muted);margin-top:4px;}
+/* Rating badge */
+.rating{display:inline-block;padding:3px 10px;border-radius:4px;font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.rating-hot{background:#1a4a2e;color:#58d68d;border:1px solid #27ae60;}
+.rating-warm{background:#4a3a1a;color:#f5b041;border:1px solid #e67e22;}
+.rating-cool{background:#3a1a2a;color:#e67e73;border:1px solid #c0392b;}
+/* Tables */
+.tbl-wrap{overflow-x:auto;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{text-align:left;padding:8px 10px;background:var(--dark);color:var(--teal);font-size:10px;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);position:sticky;top:0;}
+td{padding:8px 10px;border-bottom:1px solid #2a2a2a;vertical-align:top;}
+tr{cursor:pointer;transition:.15s;}
+tr:hover td{background:var(--card-hover);}
+tr.exp td{background:var(--card);border-bottom:none;}
+.detail-row td{background:var(--card);padding:12px 16px;border-bottom:1px solid var(--border);}
+.detail-row{display:none;}
+.detail-row.show{display:table-row;}
+.detail-inner{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.detail-inner ul{list-style:none;}
+.detail-inner li{font-size:12px;padding:2px 0 2px 12px;position:relative;color:var(--text);}
+.detail-inner li::before{content:'›';position:absolute;left:0;color:var(--teal);}
+.pname{color:var(--white);font-weight:600;font-size:13px;}
+.pval{font-family:'JetBrains Mono',monospace;color:var(--teal);font-weight:600;white-space:nowrap;}
+.tag{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500;white-space:nowrap;}
+.t-green{background:#1a3a2a;color:#58d68d;}
+.t-amber{background:#3a2a1a;color:#f5b041;}
+.t-red{background:#3a1a1a;color:#e67e73;}
+.t-blue{background:#1a2a3a;color:#5dade2;}
+.t-purple{background:#2a1a3a;color:#bb8fce;}
+.t-teal{background:#1a3a3a;color:var(--teal-light);}
+.whale{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;}
+.w-h{background:#1a4a2e;color:#58d68d;}
+.w-m{background:#4a3a1a;color:#f5b041;}
+.w-l{background:#3a1a1a;color:#e67e73;}
+/* Landslip cards */
+.ls-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ls{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.ls h5{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.ls .council{font-size:11px;color:var(--teal);margin-bottom:6px;}
+.ls .ct{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--orange);}
+.ls .fund{font-size:11px;color:var(--muted);margin-top:2px;}
+.ls .dtxt{font-size:11px;color:var(--text);margin-top:6px;line-height:1.5;}
+/* Source block */
+.src{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:20px;}
+.src h4{margin-top:0;}
+.src p,.src li{font-size:11px;color:var(--muted);line-height:1.6;}
+.src ul{list-style:disc;padding-left:16px;}
+/* Callout */
+.callout{background:var(--card);border-left:3px solid var(--teal);padding:12px 16px;margin-bottom:16px;border-radius:0 var(--r) var(--r) 0;font-size:12px;line-height:1.6;}
+.callout strong{color:var(--white);}
+/* Footer */
+.ftr{border-top:1px solid var(--border);padding:16px 0;margin-top:30px;text-align:center;}
+.ftr-b{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--muted);}
+@media(max-width:768px){.detail-inner{grid-template-columns:1fr;}.ls-grid{grid-template-columns:1fr;}.hr-row{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="hdr"><div class="ctr hdr-in">
+<div><div class="brand">VOLLARDIAN <span>×</span> AnewX</div><div class="hdr-t">Australian Infrastructure Pipeline — Strategic Research</div></div>
+<div class="hdr-d">Research as at 30 Mar 2026</div>
+</div></div>
+
+<div class="tabs">
+<div class="tab on" data-t="ov">Overview</div>
+<div class="tab" data-t="qld">Queensland</div>
+<div class="tab" data-t="nsw">New South Wales</div>
+<div class="tab" data-t="sa">South Australia</div>
+<div class="tab" data-t="wa">Western Australia</div>
+<div class="tab" data-t="nz">New Zealand</div>
+<div class="tab" data-t="wh">Whale Hunt</div>
+<div class="tab" data-t="src">Sources & Methodology</div>
+</div>
+
+<div class="ctr">
+
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
+<div class="pnl on" id="p-ov">
+<h2>Infrastructure health — state comparison</h2>
+<p class="sub">4-year capital program commitments from 2025-26 state budgets. Piling-relevant share estimated by Vollardian.</p>
+
+<div class="hr-row">
+<div class="hr">
+<div class="hr-label">Queensland</div>
+<div class="hr-val">$116.8B</div>
+<div class="hr-chg hr-up">▲ Pipeline growing</div>
+<div class="hr-note">4yr capital program. Peak 2026-27. Federal: $16B over 4yrs</div>
+<div style="margin-top:6px;"><span class="rating rating-hot">HOT</span></div>
+</div>
+<div class="hr">
+<div class="hr-label">New South Wales</div>
+<div class="hr-val">$118.3B</div>
+<div class="hr-chg hr-down">▼ Deliberate decline</div>
+<div class="hr-note">4yr program. Policy target: reduce infra to 2% of GSP by FY29. Federal: $14.2B</div>
+<div style="margin-top:6px;"><span class="rating rating-cool">COOLING</span></div>
+</div>
+<div class="hr">
+<div class="hr-label">South Australia</div>
+<div class="hr-val">$15.4B</div>
+<div class="hr-chg hr-up">▲ T2D mega-project</div>
+<div class="hr-note">Single project dominates. T2D Alliance driving massive local demand</div>
+<div style="margin-top:6px;"><span class="rating rating-warm">CONCENTRATED</span></div>
+</div>
+<div class="hr">
+<div class="hr-label">Western Australia</div>
+<div class="hr-val">$43.9B</div>
+<div class="hr-chg hr-flat">→ Transitioning</div>
+<div class="hr-note">METRONET completing. Defence/AUKUS ramping. Per capita lowest nationally</div>
+<div style="margin-top:6px;"><span class="rating rating-warm">TRANSITIONING</span></div>
+</div>
+</div>
+
+<div class="callout"><strong>Key insight:</strong> NSW is deliberately reducing infrastructure spend from 2.7% to 2.0% of GSP — a policy announced over three consecutive budgets. Meanwhile Queensland's 4-year capital program is $116.8B and growing. Federal allocation confirms the shift: QLD receives $16B vs NSW $14.2B over 4 years. Infrastructure Australia notes QLD+NT pipelines grew by $16B while NSW+VIC reduced by $39B. For AnewX, the "whale" is moving north.</div>
+<div class="callout"><strong>AnewX relationship leverage:</strong> All three of AnewX's top Tier 1 relationships have major QLD contracts active now. Laing O'Rourke → $7.1B Olympics venue program (Unite32). CPB Contractors → $5.75B Logan-Gold Coast Faster Rail (ActivUs Alliance). John Holland → Waterfront Brisbane, Lake MacDonald Dam, Cairns Water Security. These are entry tickets.</div>
+</div>
+
+<!-- ═══════════════════ QUEENSLAND ═══════════════════ -->
+<div class="pnl" id="p-qld">
+
+<!-- QLD Health -->
+<h2>Queensland — infrastructure health <span class="rating rating-hot" style="font-size:13px;vertical-align:middle;margin-left:8px;">HOT</span></h2>
+<p class="sub">$116.8B 4-year capital program (2025-26 budget). $29.3B in 2025-26 alone. $9.26B transport. Pipeline peaking 2026-27 at $15.7B/yr in funded works.</p>
+<div class="hr-row">
+<div class="hr"><div class="hr-label">4yr capital program</div><div class="hr-val">$116.8B</div><div class="hr-chg hr-up">▲ $22.6B increase vs prior</div></div>
+<div class="hr"><div class="hr-label">Transport (2025-26)</div><div class="hr-val">$9.26B</div><div class="hr-note">Bruce Highway, rail, Olympics transport</div></div>
+<div class="hr"><div class="hr-label">2032 Games venues</div><div class="hr-val">$7.1B</div><div class="hr-note">17 new/upgraded venues statewide</div></div>
+<div class="hr"><div class="hr-label">Workforce shortage</div><div class="hr-val">50,000</div><div class="hr-chg hr-up">Peak shortfall 2026-27</div></div>
+<div class="hr"><div class="hr-label">Federal allocation</div><div class="hr-val">$16B</div><div class="hr-note">Highest of any state (4yr)</div></div>
+</div>
+
+<!-- QLD Piling Pipeline -->
+<h3>Piling-relevant pipeline</h3>
+<p class="sub">Click any row to expand details on sub-packages, head contractors, timing and AnewX relationship.</p>
+<div class="tbl-wrap">
+<table id="tbl-qld">
+<thead><tr><th>Project</th><th>Value</th><th>Type</th><th>Status</th><th>Timing</th><th>Head contractor</th><th>AnewX rel.</th><th>Whale</th></tr></thead>
+<tbody>
+
+<tr onclick="togDetail(this)"><td class="pname">Brisbane Olympic Stadium — Victoria Park</td><td class="pval">~$2.5B</td><td><span class="tag t-purple">Stadium</span></td><td><span class="tag t-amber">Early works 2026</span></td><td>Earthworks mid-2026. Construction 2027. Complete 2031.</td><td>Unite32 (Laing O'Rourke + AECOM)</td><td><span class="tag t-green">HIGH 57%</span></td><td><span class="whale w-h">9/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Sub-packages requiring piling</h4><ul><li>Deep bored piles for 63,000-seat stadium (30m+ into Brisbane tuff)</li><li>Retaining walls for cut-and-fill in Victoria Park hillside amphitheatre</li><li>National Aquatic Centre foundations (adjacent site, Spring Hill)</li><li>Olympic Village foundations</li><li>New rail station on Exhibition Loop — platform/concourse piling</li><li>Pedestrian bridge foundations connecting to Cross River Rail stations</li></ul></div>
+<div><h4>Procurement & timing</h4><ul><li>Borehole drilling + seismic surveys already underway (early 2026)</li><li>Golf complex at Victoria Park closes mid-2026 → earthworks commence</li><li>Piling sub-packages likely tendered <strong>late 2026 / Q1 2027</strong></li><li>Unite32 delivery partner will manage procurement of all subcontractors</li><li><strong>Competing piling:</strong> Wagstaff Piling (QLD HQ), Bauer (QLD HQ), Piling Contractors P/L</li><li>AnewX angle: Laing O'Rourke is strongest Tier 1 relationship (16/28 projects won)</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Logan & Gold Coast Faster Rail</td><td class="pval">$5.75B</td><td><span class="tag t-blue">Rail</span></td><td><span class="tag t-green">Under construction</span></td><td>Construction commenced Feb 2026. Complete 2031.</td><td>ActivUs Alliance (CPB + UGL + Acciona + SMEC + WSP)</td><td><span class="tag t-green">HIGH 45%</span></td><td><span class="whale w-h">8/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Sub-packages requiring piling</h4><ul><li>Rail bridge foundations across 20km corridor (Kuraby to Beenleigh)</li><li>Retaining walls for track duplication in constrained urban corridor</li><li>9 station foundations — Kuraby, Trinder Park, Woodridge, Kingston, Loganlea, Bethania, Edens Landing, Holmview, Beenleigh</li><li>New Loganlea Station relocation — deep foundations</li><li>Level crossing removal structures</li><li>Stormwater/drainage structure foundations</li></ul></div>
+<div><h4>Procurement & timing</h4><ul><li>Design and pre-construction contract awarded 2025</li><li>Construction commenced February 2026</li><li>Piling sub-packages being procured <strong>now through 2027</strong></li><li>Alliance model — CPB procures subs through competitive process within framework</li><li>CPB is AnewX's 2nd strongest Tier 1 (18/40 projects won, 45% win rate)</li><li><strong>Competing piling:</strong> Wagstaff, Keller, Piling Contractors P/L</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Bribie Island Bridge Replacement</td><td class="pval">$757M</td><td><span class="tag t-teal">Bridge</span></td><td><span class="tag t-amber">Business case done</span></td><td>Business case Dec 2024. Funding TBC (likely 2026-27 budget). Construction 2027-2030.</td><td>TBD — likely D&C contract</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-h">8/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Sub-packages requiring piling</h4><ul><li>Marine piling for new bridge piers in Pumicestone Passage (tidal/marine)</li><li>Abutment foundations (mainland + island)</li><li>Approach road bridge structures + retaining walls</li><li>Intersection upgrades at Sylvan Beach Esplanade (foundations)</li><li>Road widening structures (Bestmann Road East to Benabrow Avenue)</li><li><strong>Marine/nearshore piling = AnewX's differentiator capability</strong></li></ul></div>
+<div><h4>Procurement & timing</h4><ul><li>Summary business case released April 2025</li><li>Crisafulli Government "committed to delivery" — funding timing TBC</li><li>Expect funding in 2026-27 or 2027-28 QLD Budget</li><li>Head contractor procurement follows — likely 2027</li><li>BMD, Fulton Hogan, Georgiou all active in QLD bridge D&C</li><li>AnewX has existing relationships with Fulton Hogan (3/20) and Georgiou (2/8)</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Bruce Highway — Bridge & Creek Crossing Packages</td><td class="pval">$9B program</td><td><span class="tag t-teal">Bridge/Road</span></td><td><span class="tag t-green">Multiple under delivery</span></td><td>Continuous program. Multiple packages 2026-2029. Rolling procurement.</td><td>Various — BMD, Fulton Hogan, Georgiou, CPB</td><td><span class="tag t-green">Multiple</span></td><td><span class="whale w-h">7/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Specific bridge sub-projects</h4><ul><li>Caboolture to Beerburrum — new bridge structures, creek crossings, 2→3 lanes</li><li>Ed Kratzmann Bridge at Ollera Creek (Townsville-Ingham) — reconstruction after 2025 floods</li><li>Tiaro Bypass — new alignment with bridge structures</li><li>Rockhampton Ring Road ($1.73B fully funded) — multiple river/creek crossings</li><li>Paroo River Bridge (Bulloo Developmental Road) — betterment</li><li>Cuttaburra crossing upgrade (Eyre Development Road)</li></ul></div>
+<div><h4>Procurement</h4><ul><li>$9B jointly funded 80:20 (Federal/State)</li><li>Multiple D&C packages across the program — rolling procurement</li><li>Packages are mid-size ($50M-$500M) — right scale for AnewX piling sub-packages</li><li>QTRIP 2025-26 to 2028-29 details all committed projects by region</li><li>Check TMR tender portal for current opportunities: tmr.qld.gov.au/business-and-industry/tenders</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Barron River Bridge (Kuranda Range)</td><td class="pval">$450M</td><td><span class="tag t-teal">Bridge</span></td><td><span class="tag t-purple">Election commitment</span></td><td>Planning phase. Completion target 2031. Procurement TBD.</td><td>TBD</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-m">6/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling components</h4><ul><li>Deep foundations in Barron River gorge (complex geology, steep terrain)</li><li>Abutment foundations on Kuranda Range</li><li>Approach road retaining structures</li><li>Adjacent slope stabilisation (100+ active landslip sites on Kuranda Range Rd)</li></ul></div>
+<div><h4>Context</h4><ul><li>$450M election commitment (former Miles Labor Government)</li><li>Current Crisafulli LNP Government status unclear — not explicitly confirmed/cancelled</li><li>Remote Far North QLD location — significant mobilisation cost</li><li>Lower whale score due to distance + political uncertainty</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">2032 Olympics — 17 Venue Program</td><td class="pval">$7.1B total</td><td><span class="tag t-purple">Venues</span></td><td><span class="tag t-amber">Various stages</span></td><td>Early works 2026. Peak construction 2027-2030. Ready by 2032.</td><td>Unite32 (Laing O'Rourke + AECOM)</td><td><span class="tag t-green">HIGH 57%</span></td><td><span class="whale w-m">6/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Venues requiring piling</h4><ul><li>National Aquatic Centre (Spring Hill) — pool tank + spectator foundations</li><li>Moreton Bay Indoor Sports Centre (12,000 cap, built 2026-2028)</li><li>Gold Coast Arena (12,000 cap, Carey Park — awarded)</li><li>Queensland Tennis Centre upgrades (Yeerongpilly)</li><li>Sunshine Coast Stadium upgrades</li><li>Chandler Indoor Sports Centre (10,000 cap)</li><li>Redland Whitewater Centre (new build)</li><li>Regional venues: Cairns, Townsville, Mackay, Rockhampton</li></ul></div>
+<div><h4>Procurement</h4><ul><li>$864M allocated in 2025-26 QLD Budget for first minor venues</li><li>$950M for Athletes Villages</li><li>All procured through Unite32 (Laing O'Rourke) delivery partner framework</li><li>Individual venue packages competitively tendered to subcontractors</li><li>Whale score medium because individual piling packages may be &lt;$5M each</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">The Wave — Direct Sunshine Coast Railway Stage 1</td><td class="pval">$5.5-7B</td><td><span class="tag t-blue">Rail</span></td><td><span class="tag t-purple">Pre-procurement</span></td><td>Preliminary estimates. Procurement commencing. Construction expected ~2028+.</td><td>TBD</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-m">5/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling components</h4><ul><li>New dual-track rail line from Beerwah to Caloundra</li><li>2 new stations + 1 upgraded station — platform foundations</li><li>Rail bridges and viaducts across creek crossings</li><li>Retaining structures through hilly Sunshine Coast terrain</li></ul></div>
+<div><h4>Context</h4><ul><li>Part of Brisbane 2032 transport infrastructure package</li><li>$2.75B each from Australian + QLD Governments</li><li>Still in early planning — piling opportunity is 2028+ horizon</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Shoalwater Bay Training Area (ASMTI)</td><td class="pval">$800M</td><td><span class="tag t-red">Defence</span></td><td><span class="tag t-green">Under delivery</span></td><td>Under construction. Multi-year program.</td><td>Laing O'Rourke (managing contractor)</td><td><span class="tag t-green">HIGH 57%</span></td><td><span class="whale w-m">5/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling components</h4><ul><li>Training facility building foundations</li><li>Infrastructure foundations (roads, bridges within training area)</li><li>Defence-grade hardstand foundations</li></ul></div>
+<div><h4>Context</h4><ul><li>Laing O'Rourke is managing contractor — direct AnewX relationship</li><li>Located 80km north of Rockhampton — remote</li><li>Defence security clearance may be required</li></ul></div>
+</div></td></tr>
+
+</tbody></table></div>
+
+<!-- QLD Local Government -->
+<h3>Local government infrastructure funding</h3>
+<p class="sub">68.9% of QLD's 2025-26 capital program ($20.2B) is allocated to regional areas. Key council areas benefiting from infrastructure investment:</p>
+<div class="tbl-wrap">
+<table>
+<thead><tr><th>Council / Region</th><th>Key investment</th><th>Piling relevance</th></tr></thead>
+<tbody>
+<tr><td>Brisbane City Council</td><td>Victoria Park Olympic precinct, Cross River Rail surface works, Brisbane Metro</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Gold Coast City Council</td><td>Light Rail Stage 3 ($1.55B), Gold Coast Arena, Faster Rail stations, Coomera Connector Stage 1 ($2.16B)</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Moreton Bay Regional Council</td><td>Bribie Island Bridge ($757M), Moreton Bay Indoor Sports Centre, Bruce Highway Caboolture upgrades</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Sunshine Coast Council</td><td>The Wave Stage 1 ($5.5-7B), Sunshine Coast Stadium, Mountain Bike Centre, 15 DRFA landslip repairs</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Logan City Council</td><td>Logan-Gold Coast Faster Rail (9 station upgrades), Logan Indoor Sports Centre</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Cairns Regional Council</td><td>Barron River Bridge ($450M), Cairns Water Security, Olympic venue, Kuranda Range Road reconstruction (100+ sites)</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Townsville City Council</td><td>Olympic venue, Mount Spec Road (60+ landslips), North QLD flood recovery, correctional centre</td><td><span class="tag t-amber">MODERATE</span></td></tr>
+<tr><td>Rockhampton Regional Council</td><td>Rockhampton Ring Road ($1.73B), Shoalwater Bay ASMTI ($800M), Olympic venue, new high school ($100M)</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Toowoomba Regional Council</td><td>$250M+ flood recovery program, 12+ landslip remediations, Toowoomba Equestrian Centre (Olympics)</td><td><span class="tag t-amber">MODERATE</span></td></tr>
+<tr><td>Redland City Council</td><td>Redland Whitewater Centre (Olympics, new build)</td><td><span class="tag t-amber">MODERATE</span></td></tr>
+</tbody></table></div>
+
+<!-- QLD Landslip -->
+<h3>Landslip & geotechnical opportunities</h3>
+<p class="sub">400+ active landslip/geotech sites across QLD. Driven by Cyclone Jasper (2023), 2022 floods, Cyclone Alfred (2025), 2025 western QLD flooding. All jointly funded through DRFA. $90M+ in betterment investment for 2025-26.</p>
+<div class="ls-grid">
+<div class="ls"><h5>Far North QLD — Kuranda Range & Captain Cook Hwy</h5><div class="council">Douglas Shire / Cairns RC / TMR</div><div class="ct">100+ sites</div><div class="fund">$49M betterment + ongoing reconstruction</div><div class="dtxt">TC Jasper (Dec 2023) damage. 100+ geotech sites on Kuranda Range Road. 8 repaired, 10+ actively under construction. Captain Cook Hwy: 20+ geotech sites progressing. Techniques: soil nailing, rock bolting, shotcrete, retaining structures. Betterment projects commencing late 2025 / early 2026.</div></div>
+
+<div class="ls"><h5>Townsville — Mount Spec Road</h5><div class="council">TMR / Townsville CC</div><div class="ct">60+ landslips</div><div class="fund">2025 flood recovery program</div><div class="dtxt">Record rainfall early 2025. 60+ landslips on Mt Spec Road. Ed Kratzmann Bridge (Bruce Hwy) requires reconstruction. North QLD flooding Dec 2025 - Jan 2026 caused additional damage still being assessed.</div></div>
+
+<div class="ls"><h5>Gold Coast & Sunshine Coast Hinterland</h5><div class="council">GCCC / SCC / Scenic Rim RC / TMR</div><div class="ct">50+ sites</div><div class="fund">DRFA across multiple events</div><div class="dtxt">TC Alfred (Mar 2025) hinterland landslips. Springbrook Road landslips (2023-24, repaired). Lamington NP Road repairs. First Bay Coolum — cast-in-place piles + capping beams for cliff stabilisation (1 of 15 Sunshine Coast DRFA landslips). Completion Mar 2026.</div></div>
+
+<div class="ls"><h5>SE QLD — 132-site Slope Program (State Roads)</h5><div class="council">TMR</div><div class="ct">132 sites</div><div class="fund">DRFA funded</div><div class="dtxt">Early 2022 rainfall damage across 1000km² of SE QLD. 132 sites identified for remediation. Techniques: scaling, hydromulch, rock anchors, soil nailing, pavement, drainage. Repairs across 41 LGAs. Nearing completion.</div></div>
+
+<div class="ls"><h5>Toowoomba Region</h5><div class="council">Toowoomba RC</div><div class="ct">12+ landslips</div><div class="fund">$250M+ total flood recovery</div><div class="dtxt">2022 flood events: 12+ landslip remediation projects. Sites: Alderley St Rangeville (done), Flagstone Creek, Middle Ridge, Tabletop Drive. 2024 floods: ~$18M across 1100 sites. Completion by mid-2026.</div></div>
+
+<div class="ls"><h5>Cunningham Highway — Cunninghams Gap</h5><div class="council">TMR</div><div class="ct">Major slope damage</div><div class="fund">DRFA — extended program</div><div class="dtxt">2019 bushfire caused significant slope damage. Complex site — extended repair period. Still underway in 2026. Complex geotechnical stabilisation in fire-damaged terrain.</div></div>
+
+<div class="ls"><h5>Western QLD — 2025 Surface Trough Flooding</h5><div class="council">TMR / Multiple western QLD councils</div><div class="ct">Multiple</div><div class="fund">DRFA betterment</div><div class="dtxt">Record flooding Mar-Apr 2025. 6 key state routes being upgraded. Eyre Development Road, Bulloo Developmental Road (Paroo River Bridge), Quilpie-Thargomindah Road. $1.2B+ damage to QLD economy. Predominantly road/bridge rather than slope work.</div></div>
+
+<div class="ls"><h5>Tablelands RC — Cyclone Recovery</h5><div class="council">Tablelands RC</div><div class="ct">Multiple</div><div class="fund">DRFA</div><div class="dtxt">Danbulla Road landslip repair. Russell Pocket Road — geotech investigations underway, construction 2025-26. Cyclone Jasper road repairs. Work through March 2026.</div></div>
+</div>
+
+</div>
+
+<!-- ═══════════════════ NSW ═══════════════════ -->
+<div class="pnl" id="p-nsw">
+
+<h2>New South Wales — infrastructure health <span class="rating rating-cool" style="font-size:13px;vertical-align:middle;margin-left:8px;">COOLING</span></h2>
+<p class="sub">$118.3B 4-year essential infrastructure program. However NSW Government is deliberately reducing infra spend from 2.7% to 2.0% of GSP by FY2028-29. Mega-projects (Metro, WestConnex) completing. Transport: $55.6B over 4yrs.</p>
+<div class="hr-row">
+<div class="hr"><div class="hr-label">4yr infrastructure</div><div class="hr-val">$118.3B</div><div class="hr-chg hr-down">▼ Reducing to 2% of GSP</div></div>
+<div class="hr"><div class="hr-label">Transport (4yr)</div><div class="hr-val">$55.6B</div><div class="hr-note">Incl. Sydney Metro, regional roads, fleet</div></div>
+<div class="hr"><div class="hr-label">Federal allocation</div><div class="hr-val">$14.2B</div><div class="hr-note">Below QLD's $16B</div></div>
+<div class="hr"><div class="hr-label">Infra share of budget</div><div class="hr-val">15.3%</div><div class="hr-chg hr-down">▼ from 16% prior year</div></div>
+</div>
+
+<h3>Piling-relevant pipeline</h3>
+<div class="tbl-wrap">
+<table id="tbl-nsw">
+<thead><tr><th>Project</th><th>Value</th><th>Type</th><th>Status</th><th>Timing</th><th>Head contractor</th><th>AnewX rel.</th><th>Whale</th></tr></thead>
+<tbody>
+
+<tr onclick="togDetail(this)"><td class="pname">Western Harbour Tunnel & Warringah Fwy</td><td class="pval">$14.4B</td><td><span class="tag t-blue">Tunnel/Road</span></td><td><span class="tag t-green">Under construction</span></td><td>Stage 2 awarded. Ongoing through 2028+.</td><td>Stage 2: Acciona ($4.24B). Stage 1: John Holland/CPB</td><td><span class="tag t-amber">MIXED</span></td><td><span class="whale w-m">5/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Sub-packages</h4><ul><li>Tunnel portal retaining structures (Cammeray, Rozelle)</li><li>Warringah Freeway surface roadworks foundations</li><li>Ventilation building foundations</li><li>Cut-and-cover sections — soldier pile / secant pile walls</li></ul></div>
+<div><h4>Context</h4><ul><li>Stage 2 awarded to Acciona — AnewX has 0/9 with Acciona (through CPB)</li><li>Most piling work likely already awarded or underway</li><li>Medium whale score — limited remaining packages</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">NSW Council Landslip Programs (combined)</td><td class="pval">$300M+</td><td><span class="tag t-teal">Geotech</span></td><td><span class="tag t-green">Ongoing</span></td><td>Multiple programs — continuous. Newcastle DRFA submission 2026.</td><td>Various — council + DRFA procurement</td><td><span class="tag t-green">Proven</span></td><td><span class="whale w-h">7/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Active programs</h4><ul><li><strong>Newcastle (New Lambton):</strong> $130M+ whole-of-slope intervention. Category D DRFA submission in progress. 16 properties. Retaining structures, soil nails, stabilisation earthworks.</li><li><strong>Blue Mountains:</strong> 50+ landslips in Megalong Valley. Ongoing. Geotech field works Mar 2026. Rock bolting, shotcrete, soil nailing.</li><li><strong>Wollondilly:</strong> Sheehys Creek Rd, Razorback (Remembrance Driveway). Rock bolts, mesh, embankment regrading.</li><li><strong>Cessnock CC:</strong> AnewX's existing client. $5.2M package won. Multiple flood damage packages.</li></ul></div>
+<div><h4>AnewX strategy</h4><ul><li>This is the proven "whale" model — Cessnock was $5.2M</li><li>Newcastle New Lambton is $130M+ requiring specialist piling</li><li>In NSW — home market, no mobilisation needed</li><li>DRFA funding = financially secure projects</li><li>Monitor: NSW Reconstruction Authority tenders, buy.nsw portal</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">RAAF Williamtown Upgrades (AIR 6500)</td><td class="pval">$200-500M</td><td><span class="tag t-red">Defence</span></td><td><span class="tag t-amber">RFT expected Q1 2026</span></td><td>Design services RFT expected Q1 2026. Construction 2027+.</td><td>TBD — design-and-build</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-m">6/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>Radar installation foundations (deep, engineered)</li><li>New facility building foundations</li><li>Hardstand/apron foundations</li></ul></div>
+<div><h4>Context</h4><ul><li>In Hunter Valley — AnewX's operating range</li><li>Defence security clearance required</li><li>No geographic expansion needed — good NSW "whale" candidate</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Nowra Bridge — Princes Highway</td><td class="pval">$342M</td><td><span class="tag t-teal">Bridge</span></td><td><span class="tag t-amber">Under procurement</span></td><td>EOI concept design Feb 2024. Transaction Manager May 2025. Construction ~2028+.</td><td>TBD</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-m">5/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>Major river crossing piers — deep bored piles into Shoalhaven River bed</li><li>Abutment foundations</li><li>Approach road retaining structures</li><li>Intersection upgrades (Illaroo Rd, Bridge Rd)</li></ul></div>
+<div><h4>Context</h4><ul><li>Still in early procurement — concept design + environmental assessment</li><li>Within AnewX's NSW operating range (South Coast)</li><li>Construction likely 2028+</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Fifteenth Avenue Upgrade Stage 1 (Western Sydney)</td><td class="pval">$1B</td><td><span class="tag t-blue">Road</span></td><td><span class="tag t-amber">Announced</span></td><td>Announced in 2025-26 budget. Liverpool to airport precinct.</td><td>TBD</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-m">4/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>Road bridge/overpass foundations in Western Sydney growth corridor</li><li>Retaining structures for road alignment</li><li>Drainage structure foundations</li></ul></div>
+<div><h4>Context</h4><ul><li>$1B announced in 2025-26 budget — early planning</li><li>Western Sydney — AnewX's operating area</li><li>Timing uncertain — likely 2028+ construction</li></ul></div>
+</div></td></tr>
+
+</tbody></table></div>
+
+<h3>Local government infrastructure funding</h3>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Council</th><th>Key investment</th><th>Piling relevance</th></tr></thead>
+<tbody>
+<tr><td>City of Newcastle</td><td>New Lambton landslip $130M+ remediation. Category D DRFA submission. John Hunter Hospital expansion.</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Blue Mountains CC</td><td>50+ landslip remediation sites. Megalong Valley program. Geotech field works ongoing 2026.</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Wollondilly SC</td><td>Sheehys Creek Rd, Razorback, Moreton Park Rd landslip remediations. Multiple flood damage packages.</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>Cessnock CC</td><td>AnewX's existing client. Ongoing flood recovery packages. Landslip panel.</td><td><span class="tag t-green">HIGH</span></td></tr>
+<tr><td>City of Sydney / Western Sydney</td><td>$835M Aerotropolis, $644M water infrastructure, $1B Fifteenth Ave Stage 1</td><td><span class="tag t-amber">MODERATE</span></td></tr>
+<tr><td>Shoalhaven CC</td><td>Nowra Bridge ($342M), Kangaroo Valley slopes</td><td><span class="tag t-amber">MODERATE</span></td></tr>
+</tbody></table></div>
+
+<h3>Landslip opportunities</h3>
+<div class="ls-grid">
+<div class="ls"><h5>Newcastle — New Lambton</h5><div class="council">City of Newcastle / NSW Reconstruction Authority</div><div class="ct">$130M+</div><div class="fund">Category D DRFA submission in progress (Feb 2026)</div><div class="dtxt">May 2025 landslip displaced 16 homes. Geotech report peer-reviewed. Whole-of-slope intervention required. Options: land remediation, stabilisation, demolition, buy-backs. Council costs already $1.3M+. Specialist piling required: retaining structures, soil nails, drainage.</div></div>
+<div class="ls"><h5>Blue Mountains — Megalong Valley</h5><div class="council">Blue Mountains City Council</div><div class="ct">50+ sites</div><div class="fund">DRFA + Australian Government</div><div class="dtxt">Ongoing since 2022 floods. $8.4km road upgrade program. Geotech field works at Mermaids Cave site Mar 2026. Rock bolting, shotcrete, soil nailing, drainage. New road upgrade program announced Feb 2026.</div></div>
+<div class="ls"><h5>Wollondilly — Multiple Programs</h5><div class="council">Wollondilly Shire Council</div><div class="ct">Multiple</div><div class="fund">DRFA 2022 bulk grant</div><div class="dtxt">Sheehys Creek Road: soil nails, shotcrete, debris removal, fire trail restoration. Razorback: embankment regrading, rock bolts, rock fall mesh, drainage. Cobbitty Bridge, Old Razorback Road, Big Hill Road also repaired.</div></div>
+<div class="ls"><h5>Cessnock — Existing Client</h5><div class="council">Cessnock City Council</div><div class="ct">Ongoing</div><div class="fund">DRFA + Council</div><div class="dtxt">AnewX won $5.2M package. Multiple flood damage remediation packages. 15-site landslip grouping identified in original Vollardian diagnostic. Continued pipeline of work.</div></div>
+</div>
+</div>
+
+<!-- ═══════════════════ SA ═══════════════════ -->
+<div class="pnl" id="p-sa">
+<h2>South Australia — infrastructure health <span class="rating rating-warm" style="font-size:13px;vertical-align:middle;margin-left:8px;">CONCENTRATED</span></h2>
+<p class="sub">SA's pipeline is dominated by a single mega-project: the $15.4B T2D. Ranked 4th nationally for infrastructure share of budget (IPA 2025-26).</p>
+<div class="hr-row">
+<div class="hr"><div class="hr-label">T2D project</div><div class="hr-val">$15.4B</div><div class="hr-note">SA's biggest-ever road project</div></div>
+<div class="hr"><div class="hr-label">IPA ranking</div><div class="hr-val">4th</div><div class="hr-note">National ranking for infra share of budget</div></div>
+<div class="hr"><div class="hr-label">TBM start</div><div class="hr-val">2H 2026</div><div class="hr-note">Southern Tunnels boring commences</div></div>
+<div class="hr"><div class="hr-label">Jobs per year</div><div class="hr-val">~5,500</div><div class="hr-note">90% SA labour requirement</div></div>
+</div>
+
+<h3>Piling-relevant pipeline</h3>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Project</th><th>Value</th><th>Type</th><th>Status</th><th>Timing</th><th>Head contractor</th><th>AnewX rel.</th><th>Whale</th></tr></thead>
+<tbody>
+<tr onclick="togDetail(this)"><td class="pname">Torrens to Darlington (T2D) — North-South Corridor</td><td class="pval">$15.4B</td><td><span class="tag t-blue">Tunnel/Road</span></td><td><span class="tag t-green">Under construction</span></td><td>Construction commenced late 2025. TBM 2H 2026. Southern Tunnels open 2030. Full project 2031.</td><td>T2D Alliance (John Holland + Bouygues + Arcadis + Jacobs + Ventia)</td><td><span class="tag t-green">JH: 38%</span></td><td><span class="whale w-m">5/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Massive piling sub-packages</h4><ul><li>Tunnel portal retaining structures — soldier pile / secant pile walls</li><li>Cut-and-cover tunnel sections — diaphragm walls or secant piles</li><li>TBM launch/retrieval shaft piling (3 TBMs)</li><li>Open motorway retaining walls (2.5km lowered section)</li><li>Surface road bridge and overpass foundations</li><li>Utility protection structures — micro-piling</li><li>Precast segment factory foundations (Waterloo Corner)</li><li>$850M in network/amenity upgrades (bridge foundations)</li></ul></div>
+<div><h4>Entry barriers — CRITICAL: Bouygues has captive piling</h4><ul><li>Alliance model — procurement through ICN supplier register</li><li><strong>CRITICAL: Bouygues Construction is in the Alliance — their sister company GFWA/BSA (Soletanche Bachy Group/VINCI) provides captive piling capability</strong></li><li>GFWA completed ~2,000 bored piles on METRONET YRE in WA — proven on mega-projects</li><li>Bouygues will likely direct T2D piling work to GFWA/BSA rather than external subcontractors</li><li>John Holland is in the Alliance (AnewX 38% win rate) BUT Bouygues controls piling decisions</li><li>90% SA labour hours requirement — additional barrier for NSW firm</li><li>Competing local: Belpile (SA office since 2017), Solmer Civil</li><li>Whale score: 4/10 (downgraded due to captive piling dynamic)</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Osborne Shipyard Upgrades — AUKUS</td><td class="pval">$4B+</td><td><span class="tag t-red">Defence/Marine</span></td><td><span class="tag t-amber">Planning</span></td><td>Long-term program. SSN-AUKUS construction from early 2040s.</td><td>TBD</td><td><span class="tag t-red">LOW</span></td><td><span class="whale w-l">3/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>Deep marine foundations for dry dock</li><li>Wharf/berth piling</li><li>Heavy industrial building foundations</li><li>Crane foundations</li></ul></div>
+<div><h4>Context</h4><ul><li>Highly specialised defence/marine</li><li>Top-level security clearances</li><li>Very long timeline — well beyond 2029</li><li>Not a near-term opportunity for AnewX</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">SA Bridge & Culvert Upgrade Program</td><td class="pval">Various</td><td><span class="tag t-teal">Bridge</span></td><td><span class="tag t-green">Ongoing</span></td><td>Rolling program. Multiple packages per year.</td><td>Various</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-l">2/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Projects</h4><ul><li>Upgrading bridges and culverts across SA for safety and freight productivity</li><li>Port Augusta Wharf refurbishment</li><li>Southend Jetty remediation</li><li>Southern Ports Highway upgrades</li></ul></div>
+<div><h4>Context</h4><ul><li>Individual packages are small</li><li>SA market dominated by T2D — limited separate opportunity</li><li>Not a strategic target for AnewX entry</li></ul></div>
+</div></td></tr>
+</tbody></table></div>
+</div>
+
+<!-- ═══════════════════ WA ═══════════════════ -->
+<div class="pnl" id="p-wa">
+<h2>Western Australia — infrastructure health <span class="rating rating-warm" style="font-size:13px;vertical-align:middle;margin-left:8px;">TRANSITIONING</span></h2>
+<p class="sub">$43.9B Asset Investment Program. METRONET ($10.5B total) is completing. Defence/AUKUS is the decade-long play. Per capita infrastructure funding lowest nationally at $4,700. Ranked 6th by IPA.</p>
+<div class="hr-row">
+<div class="hr"><div class="hr-label">Asset Investment Program</div><div class="hr-val">$43.9B</div><div class="hr-note">State Government total</div></div>
+<div class="hr"><div class="hr-label">Henderson Defence</div><div class="hr-val">$25B+</div><div class="hr-note">Over the decade. $12B initial commitment.</div></div>
+<div class="hr"><div class="hr-label">IPA ranking</div><div class="hr-val">6th</div><div class="hr-chg hr-down">Per capita: $4,700 (lowest)</div></div>
+<div class="hr"><div class="hr-label">METRONET status</div><div class="hr-val">Complete</div><div class="hr-note">Final station (Midland) opened Feb 2026</div></div>
+</div>
+
+<h3>Piling-relevant pipeline</h3>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Project</th><th>Value</th><th>Type</th><th>Status</th><th>Timing</th><th>Head contractor</th><th>AnewX rel.</th><th>Whale</th></tr></thead>
+<tbody>
+<tr onclick="togDetail(this)"><td class="pname">Henderson Defence Precinct — AUKUS</td><td class="pval">$25B+ decade</td><td><span class="tag t-red">Defence/Marine</span></td><td><span class="tag t-amber">Planning / Early works</span></td><td>$12B initial commitment. Detailed design ongoing. Early works 2026-27. Full build through 2030s.</td><td>TBD — Bechtel rumoured for design</td><td><span class="tag t-red">LOW</span></td><td><span class="whale w-l">3/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling (massive scale)</h4><ul><li>Graving dock construction — deepest piled structures in WA</li><li>Wharf/berth marine piling (heavy load for warships/subs)</li><li>Ship assembly hall foundations</li><li>Submarine maintenance facility foundations</li><li>Supporting infrastructure</li></ul></div>
+<div><h4>Barriers</h4><ul><li>Belpile (Perth HQ) and Wagstaff (Perth office) established</li><li>Top-level defence security clearances</li><li>Decade-long timeline</li><li>Requires WA establishment</li><li>Not a near-term whale — but massive long-term potential</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Fremantle Traffic Bridge (Swan River Crossings)</td><td class="pval">$430M</td><td><span class="tag t-teal">Bridge</span></td><td><span class="tag t-green">Under construction</span></td><td>Piling COMPLETE. Bridge closed Feb 2026. Deck install + old bridge removal. Open early 2027.</td><td>Fremantle Bridges Alliance (Arup engineering lead)</td><td><span class="tag t-red">N/A</span></td><td><span class="whale w-l">1/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Status</h4><ul><li>All piling work is COMPLETE — pile caps installed</li><li>Now in cable stay installation + deck construction</li><li>Temporary jetty pile extraction Apr-Sep 2026</li><li><strong>No remaining piling opportunity</strong></li></ul></div>
+<div><h4>Relevance</h4><ul><li>Australia's first extradosed bridge — demonstrates WA bridge ambition</li><li>$430M jointly funded (Fed/State)</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">HMAS Stirling Base Upgrades</td><td class="pval">$8B+</td><td><span class="tag t-red">Defence/Marine</span></td><td><span class="tag t-green">Under delivery</span></td><td>Upgrades ongoing. Submarine Rotational Force-West from 2027.</td><td>Various defence contractors</td><td><span class="tag t-red">LOW</span></td><td><span class="whale w-l">2/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>Wharf strengthening/extension</li><li>Training facility foundations</li><li>Submarine maintenance infrastructure</li></ul></div>
+<div><h4>Barriers</h4><ul><li>Highest-level security clearances</li><li>Garden Island — remote/restricted</li><li>Highly specialised</li></ul></div>
+</div></td></tr>
+</tbody></table></div>
+</div>
+
+<!-- ═══════════════════ NEW ZEALAND ═══════════════════ -->
+<div class="pnl" id="p-nz">
+<h2>New Zealand — infrastructure health <span class="rating rating-warm" style="font-size:13px;vertical-align:middle;margin-left:8px;">RECOVERING</span></h2>
+<p class="sub">NZ$120B+ national infrastructure pipeline. Construction activity forecast to trend upwards from 2026 to NZ$65.4B by 2030. Infrastructure spend NZ$19.6B by 2030. Auckland remains largest market. Wagstaff Piling already operates in NZ.</p>
+<div class="hr-row">
+<div class="hr"><div class="hr-label">National pipeline</div><div class="hr-val">NZ$120B+</div><div class="hr-note">2,500+ initiatives. 70% fully funded.</div></div>
+<div class="hr"><div class="hr-label">2026 projected spend</div><div class="hr-val">NZ$24.1B</div><div class="hr-note">Across all sectors</div></div>
+<div class="hr"><div class="hr-label">Infra spend by 2030</div><div class="hr-val">NZ$19.6B</div><div class="hr-note">Gradual year-on-year increase</div></div>
+<div class="hr"><div class="hr-label">Road & bridge market</div><div class="hr-val">NZ$10.8B</div><div class="hr-note">2026. 530 businesses. Fulton Hogan, Downer, Fletcher dominate.</div></div>
+</div>
+
+<h3>Piling-relevant pipeline</h3>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Project</th><th>Value</th><th>Type</th><th>Status</th><th>Timing</th><th>Head contractor</th><th>AnewX rel.</th><th>Whale</th></tr></thead>
+<tbody>
+
+<tr onclick="togDetail(this)"><td class="pname">Northland Expressway — Warkworth to Te Hana</td><td class="pval">NZ$2.9-3.8B</td><td><span class="tag t-blue">Road/Tunnel</span></td><td><span class="tag t-amber">Shortlisted — RFP stage</span></td><td>Preferred bidder early 2026. Award mid-2026. Construction late 2026. Complete ~2034.</td><td>3 shortlisted PPP consortia</td><td><span class="tag t-amber">MIXED</span></td><td><span class="whale w-m">4/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Scope & piling</h4><ul>
+<li>26km four-lane expressway with 850m twin-bore tunnel through Dome Valley</li>
+<li>3 interchanges at Warkworth, Wellsford, Te Hana</li>
+<li>Multiple bridge structures across valleys and waterways</li>
+<li>Tunnel portal retaining structures</li>
+<li>Deep foundations in geologically complex Brynderwyn Hills terrain</li>
+<li>PPP model — 30+ year concession including maintenance</li>
+</ul></div>
+<div><h4>Shortlisted consortia — critical insight</h4><ul>
+<li><strong>Northway:</strong> Acciona + abrdn — Acciona has in-house piling (Geotech/GE). Piling locked out.</li>
+<li><strong>Go>North:</strong> VINCI + John Laing + VINCI GeoInfrastructure + HEB Construction — VINCI GeoInfrastructure IS Soletanche Bachy. In-house piling locked in.</li>
+<li><strong>Together North:</strong> Plenary + Webuild + Gamuda + Service Stream — Gamuda has AnewX relationship (11% win, 1/9). No captive piling identified. <strong>Best consortium for AnewX if it wins.</strong></li>
+<li>Lower whale score due to NZ geography, PPP model complexity, and 2 of 3 consortia having captive piling</li>
+</ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Auckland City Rail Link (CRL)</td><td class="pval">NZ$5.5B</td><td><span class="tag t-blue">Rail/Tunnel</span></td><td><span class="tag t-green">Opening 2026</span></td><td>3.45km twin-tunnel. Opening Nov 2025 / 2026. Piling complete.</td><td>Link Alliance (various)</td><td><span class="tag t-red">N/A</span></td><td><span class="whale w-l">1/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Status</h4><ul><li>NZ's largest transport infrastructure project</li><li>All piling and construction substantially complete</li><li>Opening to passengers 2025/2026</li><li>No remaining piling opportunity</li></ul></div>
+<div><h4>Relevance</h4><ul><li>Demonstrates NZ willingness to invest in complex underground rail</li><li>Will boost Auckland CBD capacity by 50%</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Auckland Waitematā Harbour Crossing</td><td class="pval">NZ$10B+</td><td><span class="tag t-teal">Bridge/Tunnel</span></td><td><span class="tag t-purple">Detailed planning</span></td><td>Planning phase. Construction from 2029. NZ's most expensive project ever.</td><td>TBD</td><td><span class="tag t-amber">TBD</span></td><td><span class="whale w-l">2/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Scope</h4><ul><li>Second harbour crossing — tunnel or bridge (5 scenarios under evaluation)</li><li>184,000 vehicles/day on existing Auckland Harbour Bridge</li><li>Likely NZ's most expensive infrastructure project ever (billions)</li><li>Construction from 2029 — well beyond near-term horizon</li></ul></div>
+<div><h4>Context for AnewX</h4><ul><li>Very long-term opportunity — 2029+ construction start</li><li>Would be massive piling/tunnelling project when it proceeds</li><li>Worth monitoring but not actionable in 2-3 year window</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">Takitimu North Link (Tauranga)</td><td class="pval">NZ$1.5B+</td><td><span class="tag t-blue">Road/Bridge</span></td><td><span class="tag t-green">Stage 1 under construction</span></td><td>Stage 1 open 2026. Stage 2 underway. Includes Wairoa River bridge.</td><td>Fulton Hogan + HEB JV</td><td><span class="tag t-amber">FH: 15%</span></td><td><span class="whale w-l">2/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Piling</h4><ul><li>New bridge crossing over Wairoa River</li><li>Interchanges at Minden Road and Ōmokoroa Road</li><li>Underpass at Cambridge Road and Wairoa Road</li></ul></div>
+<div><h4>Context</h4><ul><li>Fulton Hogan + HEB JV delivering — AnewX has Fulton Hogan relationship (15%, 3/20)</li><li>Stage 1 piling likely mostly done (opening 2026)</li><li>Stage 2 may have remaining piling packages</li><li>Low whale score — NZ geography, late stage</li></ul></div>
+</div></td></tr>
+
+<tr onclick="togDetail(this)"><td class="pname">O Mahurangi Penlink (Auckland)</td><td class="pval">NZ$840M</td><td><span class="tag t-blue">Road/Bridge</span></td><td><span class="tag t-green">Under construction</span></td><td>Opening Dec 2026. Toll road.</td><td>Fletcher / HEB</td><td><span class="tag t-red">LOW</span></td><td><span class="whale w-l">1/10</span></td></tr>
+<tr class="detail-row"><td colspan="8"><div class="detail-inner">
+<div><h4>Status</h4><ul><li>Under construction — opening December 2026</li><li>Piling likely substantially complete</li><li>No remaining opportunity</li></ul></div>
+<div><h4>NZ dominant contractors</h4><ul><li>Fletcher Building — NZ's largest construction company</li><li>Fulton Hogan — roads and infrastructure</li><li>Downer — infrastructure services</li><li>HEB Construction — major NZ civil contractor</li><li>Brian Perry Civil — NZ's main specialist piling firm (self-performs foundations)</li></ul></div>
+</div></td></tr>
+
+</tbody></table></div>
+
+<h3>NZ market assessment for AnewX</h3>
+<div class="callout"><strong>NZ is not a near-term priority for AnewX.</strong> The market is dominated by local players (Fletcher, Fulton Hogan, Downer, HEB) with established NZ piling specialists (Brian Perry Civil, Spiral Drillers). Wagstaff Piling already operates in NZ. The Northland Expressway is interesting but 2 of 3 shortlisted consortia have captive piling (Acciona/Geotech, VINCI/Soletanche Bachy). The Harbour Crossing is too far out (2029+). NZ is worth monitoring for the PE thesis (sector scale) but not for AnewX's near-term whale hunt.</div>
+</div>
+
+<!-- ═══════════════════ WHALE HUNT ═══════════════════ -->
+<div class="pnl" id="p-wh">
+<h2>Tier 1 contractor piling integration — where the work actually goes</h2>
+<p class="sub">Critical strategic intelligence: which Tier 1 head contractors have captive/in-house piling, and which procure externally. This determines whether AnewX can compete.</p>
+
+<div class="tbl-wrap"><table>
+<thead><tr><th>Head contractor</th><th>In-house piling?</th><th>Piling entity</th><th>Implication for AnewX</th><th>Current major projects</th><th>AnewX win rate</th></tr></thead>
+<tbody>
+<tr style="background:rgba(39,174,96,0.08);"><td class="pname">Laing O'Rourke</td><td><span class="tag t-green">NO — procures externally</span></td><td>None identified</td><td><strong>OPEN — AnewX's #1 target.</strong> Self-performs some structural/concrete but specialist piling is subcontracted. 57% win rate confirms open procurement.</td><td>QLD Olympics $7.1B (Unite32), Shoalwater Bay $800M, WA METRONET (completed)</td><td><span class="tag t-green">57% (16/28)</span></td></tr>
+
+<tr style="background:rgba(39,174,96,0.08);"><td class="pname">CPB Contractors (CIMIC)</td><td><span class="tag t-green">NO — procures externally</span></td><td>None. CIMIC has Sedgman (mining) and UGL (services) but no piling sub.</td><td><strong>OPEN — AnewX's #2 target.</strong> CPB's parent CIMIC does not have a dedicated piling subsidiary. 45% win rate confirms external procurement.</td><td>QLD Logan-GC Rail $5.75B (ActivUs), WA BHP Western Ridge $757M, NSW RPA Hospital</td><td><span class="tag t-green">45% (18/40)</span></td></tr>
+
+<tr style="background:rgba(39,174,96,0.08);"><td class="pname">John Holland</td><td><span class="tag t-green">NO — procures externally</span></td><td>None identified. Owned by CCCC (China) — no AU piling sub.</td><td><strong>OPEN — AnewX's #3 target.</strong> External procurement confirmed by 38% win rate. BUT on SA T2D, Bouygues is the partner with captive piling (GFWA).</td><td>SA T2D Alliance $15.4B, QLD Waterfront Brisbane, NSW Sydney Metro S2B</td><td><span class="tag t-green">38% (18/47)</span></td></tr>
+
+<tr style="background:rgba(39,174,96,0.08);"><td class="pname">Gamuda</td><td><span class="tag t-green">NO — procures externally</span></td><td>Malaysian parent. No AU piling subsidiary.</td><td><strong>OPEN but weaker relationship.</strong> 11% win rate (1/9). On NZ Northland Expressway shortlist (Together North consortium).</td><td>NZ Northland Expressway (shortlisted), Various AU projects</td><td><span class="tag t-amber">11% (1/9)</span></td></tr>
+
+<tr style="background:rgba(39,174,96,0.08);"><td class="pname">Downer Group</td><td><span class="tag t-green">NO — procures externally</span></td><td>Services/rail maintenance. No piling.</td><td><strong>OPEN.</strong> Good AU win rate (52%). Active in QLD rail (train manufacturing $4.6B).</td><td>QLD Train Manufacturing $9.5B program, NZ various</td><td><span class="tag t-green">52% (12/23)</span></td></tr>
+
+<tr style="background:rgba(229,67,60,0.08);"><td class="pname">Acciona</td><td><span class="tag t-red">YES — CAPTIVE</span></td><td><strong>Geotechnical Engineering (Geotech)</strong> — acquired 2017 for $262M. Coleman Rail, John Beever also in-house. + ordered AU's first electric piling rig.</td><td><strong>LOCKED OUT.</strong> Acciona acquired Geotech to vertically integrate piling. All Acciona projects route piling to Geotech. AnewX 0/9 confirms structural lockout.</td><td>NSW Western Harbour Tunnel S2 $4.24B, QLD Logan-GC Rail (ActivUs member), NZ Northland (shortlisted), VIC North East Link</td><td><span class="tag t-red">0% (0/9)</span></td></tr>
+
+<tr style="background:rgba(229,67,60,0.08);"><td class="pname">Bouygues Construction</td><td><span class="tag t-red">YES — SISTER COMPANY</span></td><td><strong>GFWA + Bachy Soletanche Australia (BSA)</strong> — both Soletanche Bachy Group (VINCI). GFWA did 2,000 piles on YRE (WA).</td><td><strong>LIKELY LOCKED OUT.</strong> Bouygues/VINCI directs piling to Soletanche Bachy entities. On SA T2D Alliance and NZ Northland shortlist (Go>North with VINCI GeoInfrastructure built into consortium).</td><td>SA T2D Alliance $15.4B, NZ Northland (Go>North shortlisted)</td><td><span class="tag t-red">N/A</span></td></tr>
+
+<tr style="background:rgba(229,67,60,0.08);"><td class="pname">Webuild</td><td><span class="tag t-amber">PARTIAL — case by case</span></td><td>Italian parent has geotechnical capability (Astaldi legacy). May self-perform or subcontract depending on project.</td><td><strong>UNCERTAIN.</strong> Webuild is on NZ Northland shortlist (Together North with Gamuda). Limited AU track record for piling assessment.</td><td>NZ Northland (shortlisted), Various international</td><td><span class="tag t-amber">50% (1/2)</span></td></tr>
+
+</tbody></table></div>
+
+<div class="callout" style="border-left-color:var(--red);margin-top:16px;"><strong>Key strategic finding:</strong> Acciona and Bouygues/VINCI have vertically integrated piling in Australia. This means any project where these firms are head contractor (or alliance partner), piling work is structurally locked out for independent subcontractors like AnewX. This explains AnewX's 0% win rate with Acciona. It also significantly impacts the SA T2D opportunity — Bouygues is in the Alliance with access to GFWA/BSA. <strong>AnewX should focus on projects led by Laing O'Rourke, CPB, John Holland, Downer, and Gamuda — all of which procure piling externally.</strong></div>
+
+<h2 style="margin-top:24px;">Whale hunt — $5M+ opportunity ranking</h2>
+<p class="sub">Scored on: project size, piling relevance, AnewX relationship with head contractor, geographic feasibility, competitive intensity, timing certainty, and whether head contractor has captive piling.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th>#</th><th>Project</th><th>State</th><th>Value</th><th>Score</th><th>Timing for AnewX action</th><th>Why this ranks</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="pname">Brisbane Olympic Stadium</td><td>QLD</td><td class="pval">~$2.5B</td><td><span class="whale w-h">9/10</span></td><td>Piling tenders late 2026 / Q1 2027</td><td>Laing O'Rourke delivers (57% win, NO captive piling). Massive deep foundations. QLD workforce shortage.</td></tr>
+<tr><td>2</td><td class="pname">Logan-Gold Coast Faster Rail</td><td>QLD</td><td class="pval">$5.75B</td><td><span class="whale w-h">8/10</span></td><td>Piling packages NOW through 2027</td><td>CPB leads (45% win, NO captive piling). 20km corridor. Under construction now. Note: Acciona is Alliance member but CPB leads procurement.</td></tr>
+<tr><td>3</td><td class="pname">Bribie Island Bridge</td><td>QLD</td><td class="pval">$757M</td><td><span class="whale w-h">8/10</span></td><td>Funding decision 2026-27. Tender 2027.</td><td>Marine piling = AnewX differentiator. Head contractor TBD — if non-Acciona, opportunity is strong.</td></tr>
+<tr><td>4</td><td class="pname">NSW Council Landslip — Newcastle</td><td>NSW</td><td class="pval">$130M+</td><td><span class="whale w-h">7/10</span></td><td>DRFA submission 2026. Procurement TBC.</td><td>Home market. Proven Cessnock model. No Tier 1 gatekeeping — council direct procurement.</td></tr>
+<tr><td>5</td><td class="pname">Bruce Highway Bridges (QLD)</td><td>QLD</td><td class="pval">$9B pgm</td><td><span class="whale w-h">7/10</span></td><td>Rolling — continuous procurement</td><td>Multiple mid-size packages. BMD, Fulton Hogan, Georgiou — all procure piling externally.</td></tr>
+<tr><td>6</td><td class="pname">QLD Landslip Pipeline</td><td>QLD</td><td class="pval">$200M+</td><td><span class="whale w-m">6/10</span></td><td>Ongoing — DRFA continuously funded</td><td>400+ sites. Council/TMR procurement — no Tier 1 gatekeeping. AnewX capability match.</td></tr>
+<tr><td>7</td><td class="pname">RAAF Williamtown</td><td>NSW</td><td class="pval">$200-500M</td><td><span class="whale w-m">6/10</span></td><td>RFT expected Q1 2026</td><td>NSW home market. No mobilisation. Defence clearance barrier but no captive piling issue.</td></tr>
+<tr><td>8</td><td class="pname">2032 Olympics Regional Venues</td><td>QLD</td><td class="pval">$7.1B pgm</td><td><span class="whale w-m">6/10</span></td><td>Various — 2026 through 2030</td><td>Laing O'Rourke (NO captive piling). Multiple packages. Individual piling may be &lt;$5M.</td></tr>
+<tr><td>9</td><td class="pname">SA T2D Sub-Packages</td><td>SA</td><td class="pval">$15.4B</td><td><span class="whale w-m">4/10</span></td><td>Register on ICN now. TBM 2H 2026.</td><td>Downgraded: Bouygues in Alliance has CAPTIVE piling (GFWA/BSA). JH relationship may not override. 90% SA labour.</td></tr>
+<tr><td>10</td><td class="pname">NZ Northland Expressway</td><td>NZ</td><td class="pval">NZ$2.9-3.8B</td><td><span class="whale w-l">3/10</span></td><td>Award mid-2026. Construction late 2026.</td><td>2 of 3 consortia have captive piling (Acciona, VINCI). Only Together North (Gamuda) is open. NZ geography.</td></tr>
+</tbody></table></div>
+</div>
+
+<!-- ═══════════════════ SOURCES ═══════════════════ -->
+<div class="pnl" id="p-src">
+<h2>Sources & methodology</h2>
+<p class="sub">Transparency on where data comes from and what has NOT been checked.</p>
+
+<div class="src">
+<h4>Sources used</h4>
+<ul>
+<li><strong>Infrastructure Australia:</strong> 2026 Infrastructure Priority List (68 proposals, published 11 Mar 2026). 2025 Annual Budget Statement. 2025 Infrastructure Market Capacity Report. infrastructureaustralia.gov.au</li>
+<li><strong>Infrastructure Partnerships Australia:</strong> Australian Infrastructure Budget Monitor 2025-26 (state rankings, funding allocations, share metrics). ANZIP Infrastructure Pipeline database. infrastructure.org.au</li>
+<li><strong>QLD Government:</strong> 2025-26 QLD Budget Capital Statement (BP3). QTRIP 2025-26 to 2028-29. QLD Audit Office Major Projects reports (2023, 2024, 2025). TMR Natural Disaster Program page. TMR project pages. QRA publications. budget.qld.gov.au, tmr.qld.gov.au, qao.qld.gov.au</li>
+<li><strong>NSW Government:</strong> 2025-26 NSW Budget Infrastructure Statement (BP3). Infrastructure NSW Pipeline of Projects (updated Oct 2025). NSW State Infrastructure Plan 2025-26. Transport for NSW Major Projects Hub. budget.nsw.gov.au, infrastructure.nsw.gov.au</li>
+<li><strong>SA Government:</strong> Department for Infrastructure and Transport project pages. T2D Alliance website (t2d.sa.gov.au). ICN Gateway T2D directory.</li>
+<li><strong>WA Government:</strong> Building for Tomorrow project pages. Main Roads WA (Swan River Crossings). METRONET website. WA Pipeline of Works dashboard.</li>
+<li><strong>Federal Government:</strong> 2025-26 Federal Budget Papers (BP3 infrastructure). Infrastructure Investment Program budget fact sheets.</li>
+<li><strong>Defence:</strong> DECnet design opportunities analysis. Breaking Defense, USNI News, APDR reporting on Henderson/AUKUS. PM media releases.</li>
+<li><strong>Piling Federation:</strong> Complete member list by tier and state. pilingfederation.org.au</li>
+<li><strong>Council sources:</strong> City of Newcastle media releases. Blue Mountains CC Megalong Valley page. Wollondilly SC project pages. Sunshine Coast CC landslip updates. Toowoomba RC flood recovery. Douglas Shire Council budget.</li>
+<li><strong>Industry media:</strong> The Urban Developer, Infrastructure Magazine, Felix Project News, ConsultANZ, Global Construction Review.</li>
+<li><strong>Company sources:</strong> CPB Contractors media releases. John Holland website. Laing O'Rourke media releases. Wagstaff Piling ISSMGE profile. IBISWorld company profiles. Avopiling, Belpile, Ausipile, Piletech company websites.</li>
+</ul>
+</div>
+
+<div class="src" style="margin-top:12px;">
+<h4>What has NOT been checked</h4>
+<ul>
+<li><strong>Live tender portals:</strong> NSW eTendering (buy.nsw), QLD QTenders, SA Tenders, WA Tenders, VendorPanel, EstimateOne, TenderLink, Australian Tenders — these are behind logins and have not been accessed. Current open tenders may exist that are not captured here.</li>
+<li><strong>Head contractor procurement portals:</strong> CPB, John Holland, Laing O'Rourke, Bouygues etc. all have their own supplier registration and tender portals for subcontractor procurement. These have not been checked.</li>
+<li><strong>ICN Gateway:</strong> The T2D Project Directory on ICN Gateway (gateway.icn.org.au) has not been accessed. AnewX should register here for SA opportunities.</li>
+<li><strong>Individual council tender portals:</strong> Many QLD and NSW councils post geotechnical/landslip tenders on their own procurement systems (VendorPanel, TenderLink, or direct). These have not been checked.</li>
+<li><strong>Defence tender portal:</strong> AusTender (austender.gov.au) has not been checked for specific Williamtown or Henderson procurement notices.</li>
+</ul>
+<p style="margin-top:8px;"><strong>Recommendation:</strong> For a complete view, AnewX should set up monitoring on: (1) TMR QLD tenders page, (2) buy.nsw for NSW Reconstruction Authority tenders, (3) ICN Gateway for SA T2D, (4) QLD council VendorPanel/TenderLink alerts for "piling", "landslip", "geotechnical", "slope remediation".</p>
+</div>
+
+<div class="src" style="margin-top:12px;">
+<h4>Methodology notes</h4>
+<ul>
+<li><strong>Whale scores:</strong> Subjective assessment by Vollardian based on: (1) project piling content, (2) AnewX win rate with head contractor, (3) geographic feasibility, (4) timing certainty, (5) competitive intensity, (6) barriers to entry. Scores 1-10.</li>
+<li><strong>Infrastructure health ratings:</strong> Based on IPA Budget Monitor rankings, 4-year capital program trends, federal allocation shares, and workforce demand projections from Infrastructure Australia Market Capacity Report.</li>
+<li><strong>Revenue estimates for competitors:</strong> Based on IBISWorld profiles, Piling Federation tier classifications, and publicly available data. Marked as estimates.</li>
+<li><strong>"Piling relevance":</strong> Assessed based on project type. Bridges, tunnels, rail stations, marine structures, stadiums, slope stabilisation = HIGH. Road upgrades, building fit-out = MODERATE/LOW.</li>
+</ul>
+</div>
+</div>
+
+</div><!-- end ctr -->
+
+<div class="ftr ctr">
+<div class="ftr-b">VOLLARDIAN</div>
+<div style="font-size:10px;color:var(--muted);margin-top:6px;">© CXP Labs Pty Ltd t/a Vollardian. Confidential — intended solely for AnewX leadership.</div>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{
+t.addEventListener('click',()=>{
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('.pnl').forEach(x=>x.classList.remove('on'));
+t.classList.add('on');
+document.getElementById('p-'+t.dataset.t).classList.add('on');
+});
+});
+function togDetail(row){
+const dr=row.nextElementSibling;
+if(dr&&dr.classList.contains('detail-row')){
+dr.classList.toggle('show');
+row.classList.toggle('exp');
+}
+}
+</script>
+</body>
+</html>
